@@ -1,0 +1,2 @@
+# P10_Creez_une_API_securisee_RESTful_en_utilisant_Django_REST
+Projet numéro10 du parcour OpenClassrooms "développeur d'application python"
