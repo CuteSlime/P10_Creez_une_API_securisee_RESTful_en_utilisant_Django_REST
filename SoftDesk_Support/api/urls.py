@@ -1,8 +1,8 @@
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from .views import CustomUserAPIView
+from .views import CustomUserViewSet
 
-
-urlpatterns = [
-    path('user/', CustomUserAPIView.as_view()),
-]
+router = SimpleRouter()
+router.register('users', CustomUserViewSet, basename="users"),
+urlpatterns = router.urls
