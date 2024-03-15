@@ -10,10 +10,9 @@ class CustomUser(AbstractUser):
     created_time = models.DateField(auto_now_add=True)
 
     def clean(self):
-        if self.age < 16 and (self.can_be_contacted or self.can_data_be_shared):
+        if self.age < 16:
             raise ValidationError(
-                "En respect du RGPD, les Utilisateur de moin de "
-                + "16 ans ne peuvent pas être contacter ni partager leur information")
+                "les Utilisateur de moin de 16 ans ne sont pas accepter")
         super().clean()
 
     def save(self, *args, **kwargs):

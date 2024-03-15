@@ -27,6 +27,17 @@ class UserSerializer(serializers.ModelSerializer):
             representation.pop('email', None)
         return representation
 
+    def validate(self, data):
+        age = data.get('age', 0)
+        # can_be_contacted = data.get('can_be_contacted', False)
+        # can_data_be_shared = data.get('can_data_be_shared', False)
+
+        if age < 16:
+            raise serializers.ValidationError(
+                "les Utilisateur de moin de 16 ans ne sont pas accepter")
+
+        return data
+
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
