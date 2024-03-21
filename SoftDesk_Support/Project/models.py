@@ -10,15 +10,18 @@ class Project(models.Model):
         ('iOS', 'iOS'),
         ('Android', 'Android'),
     ]
-    author = models.ForeignKey(CustomUser, verbose_name="Auteur du projet")
+    author = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, verbose_name="Auteur du projet")
     contributors = models.ManyToManyField(
         CustomUser, through='Contributor', verbose_name="Contributeurs")
-    name = models.CharField(max_length=60, verbose_name="Nom du projet")
+    name = models.CharField(max_length=60, null=False,
+                            verbose_name="Nom du projet")
     description = models.TextField(
         max_length=500, verbose_name="Description du projet")
     type = models.CharField(
         max_length=10, choices=TYPE_CHOICES, verbose_name="type de projet")
-    created = models.DateField(auto_now_add=True)
+    created_time = models.DateField(auto_now_add=True)
+
 
     def __str__(self):
         return self.name
@@ -27,4 +30,4 @@ class Project(models.Model):
 class Contributor(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    created = models.DateField(auto_now_add=True)
+    created_time = models.DateField(auto_now_add=True)
