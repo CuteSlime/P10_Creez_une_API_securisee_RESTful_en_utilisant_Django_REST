@@ -22,6 +22,10 @@ class Project(models.Model):
         max_length=10, choices=TYPE_CHOICES, verbose_name="type de projet")
     created_time = models.DateField(auto_now_add=True)
 
+    # Add the author as a contributor
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        Contributor.objects.get_or_create(user=self.author, project=self)
 
     def __str__(self):
         return self.name
