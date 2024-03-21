@@ -1,6 +1,8 @@
 from django.contrib.auth.models import Group
-from accounts.models import CustomUser
 from rest_framework import serializers
+
+from accounts.models import CustomUser
+from Project.models import Project, Contributor
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             'groups',
             'can_be_contacted',
             'can_data_be_shared',
+            'created_time',
         ]
 
     def to_representation(self, instance):
@@ -29,8 +32,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         age = data.get('age', 0)
-        # can_be_contacted = data.get('can_be_contacted', False)
-        # can_data_be_shared = data.get('can_data_be_shared', False)
 
         if age < 16:
             raise serializers.ValidationError(
@@ -43,3 +44,51 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ['name']
+
+
+class ContributorSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Contributor
+        fields = ['user', 'created_time']
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    contributors = ContributorSerializer(many=True, read_only=True)
+    type = serializers.ChoiceField(choices=Project.TYPE_CHOICES)
+
+    class Meta:
+        model = Project
+        fields = [
+            'id',
+            'author',
+            'contributors',
+            'name',
+            'description',
+            'type',
+            'created_time',
+        ]
+
+    def validate(self, data):
+        contributor_id = data.get('contributor', None)
+
+        if contributor_id is not None:
+            try:
+                CustomUser.objects.get(id=contributor_id)
+            except CustomUser.DoesNotExist:
+                raise serializers.ValidationError(
+                    "l'id {} ne correspond à aucun utilisateurs connu".format(contributor_id))
+
+        return data
+
+    def update(self, instance, validated_data):
+        contributor_id = validated_data.pop('contributor', None)
+        instance = super().update(instance, validated_data)
+
+        if contributor_id is not None:
+            user = CustomUser.objects.get(id=contributor_id)
+            Contributor.objects.get_or_create(user=user, project=instance)
+
+        return instance
