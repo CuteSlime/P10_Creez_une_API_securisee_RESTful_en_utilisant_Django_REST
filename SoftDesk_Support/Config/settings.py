@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     # Local
     'accounts.apps.AccountsConfig',
     'api.apps.ApiConfig',
+    'project.apps.ProjectConfig',
+    'issue.apps.IssueConfig',
 
 ]
 
