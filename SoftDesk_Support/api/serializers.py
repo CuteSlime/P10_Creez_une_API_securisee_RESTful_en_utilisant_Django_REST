@@ -5,6 +5,17 @@ from accounts.models import CustomUser
 from project.models import Project, Contributor
 
 
+class ChoiceFieldWithCustomErrorMessage(serializers.ChoiceField):
+
+    def run_validation(self, data=serializers.empty):
+        try:
+            return super().run_validation(data)
+        except serializers.ValidationError:
+            choices = ', '.join(self.choices.keys())
+            raise serializers.ValidationError(
+                f" '{data}' n'est pas un choix valide. Les choix disponible sont : {choices}")
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -13,7 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'age',
-            'groups',
             'can_be_contacted',
             'can_data_be_shared',
             'created_time',
@@ -57,7 +67,7 @@ class ContributorSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     contributors = ContributorSerializer(many=True, read_only=True)
-    type = serializers.ChoiceField(choices=Project.TYPE_CHOICES)
+    type = ChoiceFieldWithCustomErrorMessage(choices=Project.TYPE_CHOICES)
 
     class Meta:
         model = Project
@@ -79,7 +89,7 @@ class ProjectSerializer(serializers.ModelSerializer):
                 CustomUser.objects.get(id=contributor_id)
             except CustomUser.DoesNotExist:
                 raise serializers.ValidationError(
-                    "l'id {} ne correspond à aucun utilisateurs connu".format(contributor_id))
+                    f"l'id {contributor_id} ne correspond à aucun utilisateurs connu")
 
         return data
 
