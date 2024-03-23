@@ -58,10 +58,11 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class ContributorSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    project = serializers.StringRelatedField()
 
     class Meta:
         model = Contributor
-        fields = ['user', 'created_time']
+        fields = ['user', 'project', 'created_time']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -80,6 +81,21 @@ class ProjectSerializer(serializers.ModelSerializer):
             'type',
             'created_time',
         ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['contributors'] = ContributorSerializer(
+            instance.contributor_set.all(), many=True).data
+        return representation
+
+    def create(self, validated_data):
+        # Get the current authenticated user from the request
+        user = self.context['request'].user
+        # Set the author to the authenticated user
+        validated_data['author'] = user
+        # Create the project instance
+        project = super().create(validated_data)
+        return project
 
     def validate(self, data):
         contributor_id = data.get('contributor', None)
