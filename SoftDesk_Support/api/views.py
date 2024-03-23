@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 from django.contrib.auth.models import Group
 
 from accounts.models import CustomUser
-from Project.models import Project
+from project.models import Project
 from .serializers import UserSerializer, GroupSerializer, ProjectSerializer
 from .permissions import CustomUserPermissions
 

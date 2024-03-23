@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 from accounts.models import CustomUser
-from Project.models import Project
+from project.models import Project
 
 
 class Issue(models.Model):

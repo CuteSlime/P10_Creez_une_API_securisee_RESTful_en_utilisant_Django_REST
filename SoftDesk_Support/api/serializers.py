@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group
 from rest_framework import serializers
 
 from accounts.models import CustomUser
-from Project.models import Project, Contributor
+from project.models import Project, Contributor
 
 
 class UserSerializer(serializers.ModelSerializer):
