@@ -2,8 +2,8 @@ from rest_framework import viewsets, permissions
 from django.contrib.auth.models import Group
 
 from accounts.models import CustomUser
-from project.models import Project
-from .serializers import UserSerializer, GroupSerializer, ProjectSerializer
+from project.models import Project, Contributor
+from .serializers import UserSerializer, GroupSerializer, ProjectSerializer, ContributorSerializer
 from .permissions import CustomUserPermissions
 
 
@@ -27,9 +27,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
-    def metadata(self, request):
-        metadata = super().metadata(request)
-        metadata['actions']['POST']['type'] = {
-            'choices': [choice[0] for choice in Project.TYPE_CHOICES]
-        }
-        return metadata
+
+class ContributorViewSet(viewsets.ModelViewSet):
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
