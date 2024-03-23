@@ -11,9 +11,9 @@ class Project(models.Model):
         ('Android', 'Android'),
     ]
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, verbose_name="Auteur du projet")
+        CustomUser, on_delete=models.CASCADE, related_name="project_author", verbose_name="Auteur du projet")
     contributors = models.ManyToManyField(
-        CustomUser, through='Contributor', verbose_name="Contributeurs")
+        CustomUser, through='Contributor', related_name="project_contributor", verbose_name="Contributeurs")
     name = models.CharField(max_length=60, null=False,
                             verbose_name="Nom du projet")
     description = models.TextField(

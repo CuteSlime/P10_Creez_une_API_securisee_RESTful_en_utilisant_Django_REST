@@ -20,11 +20,12 @@ class Issue(models.Model):
         ('Feature', 'Feature'),
         ('Task', 'Task'),
     ]
-    author = models.ForeignKey(CustomUser, verbose_name="Auteur du ticket")
+    author = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="issue_author", verbose_name="Auteur du ticket")
     assign_to = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
-        null=True,
+        null=True, related_name="assigned_user",
         limit_choices_to={'contributor__project': models.F('project')},
         verbose_name="assigner à"
     )
@@ -48,7 +49,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
-        null=True,
+        null=True, related_name="comment_author",
         verbose_name="Auteur du commentaire",
     )
     issue = models.ForeignKey(
