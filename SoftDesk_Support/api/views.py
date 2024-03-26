@@ -4,7 +4,15 @@ from django.contrib.auth.models import Group
 
 from accounts.models import CustomUser
 from project.models import Project, Contributor
-from .serializers import UserSerializer, GroupSerializer, ProjectSerializer, ContributorSerializer
+from issue.models import Issue, Comment
+from .serializers import (
+    UserSerializer,
+    GroupSerializer,
+    ProjectSerializer,
+    ContributorSerializer,
+    IssueSerializer,
+    CommentSerializer,
+)
 from .permissions import CustomUserPermissions
 
 
@@ -61,6 +69,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 )
         return super().destroy(request, *args, **kwargs)
 
+
+class IssueViewSet(viewsets.ModelViewSet):
+    queryset = Issue.objects.all()
+    serializer_class = IssueSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
 
 class ContributorViewSet(viewsets.ModelViewSet):

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from accounts.models import CustomUser
 from project.models import Project, Contributor
+from issue.models import Issue, Comment
 
 
 class ChoiceFieldWithCustomErrorMessage(serializers.ChoiceField):
@@ -97,24 +98,60 @@ class ProjectSerializer(serializers.ModelSerializer):
         project = super().create(validated_data)
         return project
 
-    def validate(self, data):
-        contributor_id = data.get('contributor', None)
 
-        if contributor_id is not None:
-            try:
-                CustomUser.objects.get(id=contributor_id)
-            except CustomUser.DoesNotExist:
-                raise serializers.ValidationError(
-                    f"l'id {contributor_id} ne correspond à aucun utilisateurs connu")
+class IssueSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    assign_to = serializers.StringRelatedField()
+    # project = serializers.StringRelatedField()
+    statue = ChoiceFieldWithCustomErrorMessage(choices=Issue.STATUE_CHOICES)
+    priority = ChoiceFieldWithCustomErrorMessage(
+        choices=Issue.PRIORITY_CHOICES)
+    tag = ChoiceFieldWithCustomErrorMessage(choices=Issue.TAG_CHOICES)
 
-        return data
+    class Meta:
+        model = Issue
+        fields = [
+            'id',
+            'author',
+            'assign_to',
+            'project',
+            'title',
+            'description',
+            'statue',
+            'priority',
+            'tag',
+            'created_time',
+        ]
 
-    def update(self, instance, validated_data):
-        contributor_id = validated_data.pop('contributor', None)
-        instance = super().update(instance, validated_data)
+    def create(self, validated_data):
+        # Get the current authenticated user from the request
+        user = self.context['request'].user
+        # Set the author to the authenticated user
+        validated_data['author'] = user
+        # Create the issue instance
+        issue = super().create(validated_data)
+        return issue
 
-        if contributor_id is not None:
-            user = CustomUser.objects.get(id=contributor_id)
-            Contributor.objects.get_or_create(user=user, project=instance)
 
-        return instance
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+    issue = serializers.StringRelatedField()
+
+    class Meta:
+        model = Comment
+        fields = [
+            'author',
+            'issue',
+            'description',
+            'id',
+            'created_time',
+        ]
+
+    def create(self, validated_data):
+        # Get the current authenticated user from the request
+        user = self.context['request'].user
+        # Set the author to the authenticated user
+        validated_data['author'] = user
+        # Create the issue instance
+        issue = super().create(validated_data)
+        return issue
