@@ -1,5 +1,5 @@
 from django.urls import path
-from rest_framework.routers import SimpleRouter
+from rest_framework.routers import DefaultRouter
 
 from .views import (
     CustomUserViewSet,
@@ -8,7 +8,8 @@ from .views import (
     IssueViewSet,
     CommentViewSet,
 )
-router = SimpleRouter()
+
+router = DefaultRouter()
 router.register('users', CustomUserViewSet, basename="users"),
 router.register('contributors', ContributorViewSet, basename="contributors"),
 router.register('projects', ProjectViewSet, basename="projects"),
