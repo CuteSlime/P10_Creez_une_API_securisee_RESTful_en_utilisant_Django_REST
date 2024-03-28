@@ -101,8 +101,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
-    assign_to = serializers.StringRelatedField()
-    # project = serializers.StringRelatedField()
+    assign_to = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.all(), allow_null=True)
     statue = ChoiceFieldWithCustomErrorMessage(choices=Issue.STATUE_CHOICES)
     priority = ChoiceFieldWithCustomErrorMessage(
         choices=Issue.PRIORITY_CHOICES)
@@ -135,15 +135,15 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
-    issue = serializers.StringRelatedField()
 
     class Meta:
         model = Comment
         fields = [
+            'id',
             'author',
             'issue',
             'description',
-            'id',
+            'uuid',
             'created_time',
         ]
 
