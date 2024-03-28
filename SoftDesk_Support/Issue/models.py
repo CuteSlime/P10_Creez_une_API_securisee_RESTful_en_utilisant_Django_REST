@@ -56,7 +56,7 @@ class Comment(models.Model):
         Issue, null=False, on_delete=models.CASCADE, verbose_name="Ticket")
     description = models.TextField(
         max_length=500, verbose_name="commentaire")
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created_time = models.DateField(auto_now_add=True)
 
     def __str__(self):
