@@ -90,13 +90,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         return representation
 
     def create(self, validated_data):
-        # Get the current authenticated user from the request
-        user = self.context['request'].user
-        # Set the author to the authenticated user
-        validated_data['author'] = user
-        # Create the project instance
-        project = super().create(validated_data)
-        return project
+        # Get the current authenticated user and set it as author.
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class IssueSerializer(serializers.ModelSerializer):
@@ -124,13 +120,9 @@ class IssueSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # Get the current authenticated user from the request
-        user = self.context['request'].user
-        # Set the author to the authenticated user
-        validated_data['author'] = user
-        # Create the issue instance
-        issue = super().create(validated_data)
-        return issue
+        # Get the current authenticated user and set it as author.
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -148,10 +140,6 @@ class CommentSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # Get the current authenticated user from the request
-        user = self.context['request'].user
-        # Set the author to the authenticated user
-        validated_data['author'] = user
-        # Create the issue instance
-        issue = super().create(validated_data)
-        return issue
+        # Get the current authenticated user and set it as author.
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
