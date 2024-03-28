@@ -70,16 +70,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
+class ContributorViewSet(viewsets.ModelViewSet):
+    serializer_class = ContributorSerializer
+
+    def get_queryset(self):
+        return Contributor.objects.filter(project_id=self.kwargs['project_pk'])
+
+
 class IssueViewSet(viewsets.ModelViewSet):
-    queryset = Issue.objects.all()
     serializer_class = IssueSerializer
+
+    def get_queryset(self):
+        return Issue.objects.filter(project_id=self.kwargs['project_pk'])
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-
-class ContributorViewSet(viewsets.ModelViewSet):
-    queryset = Contributor.objects.all()
-    serializer_class = ContributorSerializer
+    def get_queryset(self):
+        return Comment.objects.filter(issue_id=self.kwargs['issue_pk'])
