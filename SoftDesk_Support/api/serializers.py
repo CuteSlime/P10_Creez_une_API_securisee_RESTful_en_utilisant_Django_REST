@@ -66,6 +66,12 @@ class ContributorSerializer(serializers.ModelSerializer):
         model = Contributor
         fields = ['user', 'project', 'created_time']
 
+    def create(self, validated_data):
+        # Get the current  project, then set it.
+        validated_data['project'] = Project.objects.get(
+            pk=self.context['view'].kwargs['project_pk'])
+        return super().create(validated_data)
+
 
 class ProjectSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
@@ -121,8 +127,10 @@ class IssueSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # Get the current authenticated user and set it as author.
+        # Get the current authenticated user and project, then set them to their respective field.
         validated_data['author'] = self.context['request'].user
+        validated_data['project'] = Project.objects.get(
+            pk=self.context['view'].kwargs['project_pk'])
         return super().create(validated_data)
 
 
@@ -141,6 +149,8 @@ class CommentSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # Get the current authenticated user and set it as author.
+        # Get the current authenticated user and issue, then set them to their respective field.
         validated_data['author'] = self.context['request'].user
+        validated_data['issue'] = Issue.objects.get(
+            pk=self.context['view'].kwargs['issue_pk'])
         return super().create(validated_data)
