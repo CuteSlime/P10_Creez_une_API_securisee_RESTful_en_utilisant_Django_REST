@@ -83,6 +83,11 @@ class IssueViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Issue.objects.filter(project_id=self.kwargs['project_pk'])
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['project'] = self.kwargs['project_pk']
+        return context
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer

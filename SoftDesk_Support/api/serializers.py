@@ -60,7 +60,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class ContributorSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
-    project = serializers.StringRelatedField()
+    project = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
     class Meta:
         model = Contributor
@@ -104,8 +104,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
-    assign_to = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.all(), allow_null=True)
+    assign_to = serializers.SlugRelatedField(
+        queryset=CustomUser.objects.none(),
+        slug_field='username',
+        required=False,
+        allow_null=True,
+    )
+    project = serializers.SlugRelatedField(slug_field='name', read_only=True)
     statue = ChoiceFieldWithCustomErrorMessage(choices=Issue.STATUE_CHOICES)
     priority = ChoiceFieldWithCustomErrorMessage(
         choices=Issue.PRIORITY_CHOICES)
@@ -126,6 +131,15 @@ class IssueSerializer(serializers.ModelSerializer):
             'created_time',
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'context' in kwargs:
+            project_id = kwargs['context'].get('project')
+            self.fields['assign_to'].queryset = CustomUser.objects.filter(
+                id__in=Contributor.objects.filter(
+                    project=project_id).values_list('user', flat=True)
+            )
+
     def create(self, validated_data):
         # Get the current authenticated user and project, then set them to their respective field.
         validated_data['author'] = self.context['request'].user
@@ -136,6 +150,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
+    issue = serializers.SlugRelatedField(slug_field='title', read_only=True)
 
     class Meta:
         model = Comment
