@@ -7,6 +7,7 @@ from issue.models import Issue, Comment
 
 
 class ChoiceFieldWithCustomErrorMessage(serializers.ChoiceField):
+    """ error message that give the list of available choices."""
 
     def run_validation(self, data=serializers.empty):
         try:
