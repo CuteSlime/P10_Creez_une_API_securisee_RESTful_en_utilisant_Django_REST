@@ -41,7 +41,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         contributor_name = request.data.get('contributors')
         if contributor_name is not None:
             try:
-                user = CustomUser.objects.get(username=contributor_name)
+                if CustomUser.objects.filter(username=contributor_name).count == 1:
+                    user = CustomUser.objects.get(username=contributor_name)
+                else:
+                    user = CustomUser.objects.get(id=contributor_name)
                 Contributor.objects.get_or_create(user=user, project=instance)
             except CustomUser.DoesNotExist:
                 return Response(
@@ -52,18 +55,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        contributor_name = request.data.get('contributors')
-        if contributor_name is not None:
+        contributor_id = request.data.get('contributors')
+        if contributor_id is not None:
             try:
-                user = CustomUser.objects.get(username=contributor_name)
                 contributor = Contributor.objects.get(
-                    user=user, project=instance)
+                    id=contributor_id)
                 contributor.delete()
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
-            except (CustomUser.DoesNotExist, Contributor.DoesNotExist):
+            except Contributor.DoesNotExist:
                 return Response(
-                    {"error": f"le contributeur {contributor_name} "
+                    {"error": f"le contributeur {contributor_id} "
                      + "n'existe pas dans ce projet"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
