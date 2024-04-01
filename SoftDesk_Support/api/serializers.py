@@ -64,7 +64,7 @@ class ContributorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contributor
-        fields = ['user', 'project', 'created_time']
+        fields = ['id', 'user', 'project', 'created_time']
 
     def create(self, validated_data):
         # Get the current  project, then set it.
