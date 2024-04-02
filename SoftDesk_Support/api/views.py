@@ -13,7 +13,7 @@ from .serializers import (
     IssueSerializer,
     CommentSerializer,
 )
-from .permissions import CustomUserPermissions
+from .permissions import CustomUserPermissions, ProjectPermissions, IssuePermissions
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -35,6 +35,7 @@ class GroupsViewSet(viewsets.ModelViewSet):
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [ProjectPermissions]
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -81,6 +82,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
 
 class IssueViewSet(viewsets.ModelViewSet):
     serializer_class = IssueSerializer
+    permission_classes = [IssuePermissions]
 
     def get_queryset(self):
         return Issue.objects.filter(project_id=self.kwargs['project_pk'])
