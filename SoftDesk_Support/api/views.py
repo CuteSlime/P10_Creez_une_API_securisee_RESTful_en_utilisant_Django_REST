@@ -13,7 +13,7 @@ from .serializers import (
     IssueSerializer,
     CommentSerializer,
 )
-from .permissions import CustomUserPermissions, ProjectPermissions, IssuePermissions
+from .permissions import CustomUserPermissions, ProjectPermissions, IssuePermissions, CommentPermissions
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -95,6 +95,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = [CommentPermissions]
 
     def get_queryset(self):
         return Comment.objects.filter(issue_id=self.kwargs['issue_pk'])
