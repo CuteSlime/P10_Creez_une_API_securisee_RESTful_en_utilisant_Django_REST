@@ -42,7 +42,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         contributor_name = request.data.get('contributors')
         if contributor_name is not None:
             try:
-                if CustomUser.objects.filter(username=contributor_name).count == 1:
+                print(CustomUser.objects.filter(
+                    username=contributor_name).count)
+                if CustomUser.objects.filter(username=contributor_name).count() == 1:
                     user = CustomUser.objects.get(username=contributor_name)
                 else:
                     user = CustomUser.objects.get(id=contributor_name)
