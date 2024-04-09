@@ -15,6 +15,7 @@ class CustomUserAdmin(UserAdmin):
         "age",
         "can_be_contacted",
         "can_data_be_shared",
+        "is_active",
         "is_staff",
     ]
     fieldsets = UserAdmin.fieldsets + ((None, {"fields":

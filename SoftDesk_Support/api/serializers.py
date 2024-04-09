@@ -24,12 +24,14 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'username',
+            'password',
             'email',
             'age',
             'can_be_contacted',
             'can_data_be_shared',
             'created_time',
         ]
+        extra_kwargs = {'password': {'write_only': True}}
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -43,13 +45,30 @@ class UserSerializer(serializers.ModelSerializer):
         return representation
 
     def validate(self, data):
-        age = data.get('age', 0)
+        age = data.get('age')
 
-        if age < 16:
+        if age is not None and age < 16:
             raise serializers.ValidationError(
                 "les Utilisateur de moin de 16 ans ne sont pas accepter")
 
         return data
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = CustomUser(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
 
 
 class GroupSerializer(serializers.ModelSerializer):
