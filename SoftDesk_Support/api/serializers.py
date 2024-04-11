@@ -1,9 +1,25 @@
-from django.contrib.auth.models import Group
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from accounts.models import CustomUser
 from project.models import Project, Contributor
 from issue.models import Issue, Comment
+
+
+class CustomSlugRelatedField(serializers.SlugRelatedField):
+    def to_internal_value(self, data):
+        try:
+            value = self.get_queryset().get(**{self.slug_field: data})
+            return value
+        except ObjectDoesNotExist:
+            available_users = self.get_queryset().values_list('id', 'username')
+            user_list = ', '.join(
+                [f'{username} (ID: {id})' for id, username in available_users])
+
+            raise serializers.ValidationError(
+                f"L'utilisateur {
+                    data} n'existe pas. Les choix disponible sont : {user_list}"
+            )
 
 
 class ChoiceFieldWithCustomErrorMessage(serializers.ChoiceField):
@@ -71,12 +87,6 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class GroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['name']
-
-
 class ContributorSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     project = serializers.SlugRelatedField(slug_field='name', read_only=True)
@@ -123,7 +133,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class IssueSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
-    assign_to = serializers.SlugRelatedField(
+    assign_to = CustomSlugRelatedField(
         queryset=CustomUser.objects.none(),
         slug_field='username',
         required=False,
