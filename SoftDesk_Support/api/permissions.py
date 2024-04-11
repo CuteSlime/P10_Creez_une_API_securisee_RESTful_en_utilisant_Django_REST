@@ -10,6 +10,9 @@ class CustomUserPermissions(permissions.BasePermission):
 
     # the list view
     def has_permission(self, request, view):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         # Allow guest users to create a new user
         if view.action == 'create':
             return True
@@ -22,6 +25,9 @@ class CustomUserPermissions(permissions.BasePermission):
 
     # the object instance view
     def has_object_permission(self, request, view, obj):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         # Allow users to update or delete their own instance
         if view.action in ['update', 'partial_update', 'destroy']:
             return obj == request.user or request.user.is_staff
@@ -39,6 +45,9 @@ class ProjectPermissions(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         # Allow any authenticated user to create a new project
         if view.action == 'create':
             return request.user.is_authenticated
@@ -50,6 +59,9 @@ class ProjectPermissions(permissions.BasePermission):
             return request.user.is_staff
 
     def has_object_permission(self, request, view, obj):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         # Check if the user is a contributor of the project
         is_contributor = obj.contributors.filter(
             id=request.user.id).exists()
@@ -76,6 +88,9 @@ class IssuePermissions(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         project_id = view.kwargs.get('project_pk')
         if project_id is not None:
             project = Project.objects.get(id=project_id)
@@ -92,6 +107,9 @@ class IssuePermissions(permissions.BasePermission):
             return request.user.is_staff
 
     def has_object_permission(self, request, view, obj):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         # Check if the user is a contributor of the project
         is_contributor = obj.project.contributors.filter(
             id=request.user.id).exists()
@@ -122,6 +140,9 @@ class CommentPermissions(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         project_id = view.kwargs.get('project_pk')
         if project_id is not None:
             project = Project.objects.get(id=project_id)
@@ -138,6 +159,9 @@ class CommentPermissions(permissions.BasePermission):
             return request.user.is_staff
 
     def has_object_permission(self, request, view, obj):
+        # Allow OPTIONS requests
+        if request.method == 'OPTIONS':
+            return True
         # Check if the user is a contributor of the project
         is_contributor = obj.issue.project.contributors.filter(
             id=request.user.id).exists()
