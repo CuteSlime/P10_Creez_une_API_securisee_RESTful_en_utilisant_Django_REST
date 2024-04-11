@@ -9,6 +9,9 @@ class CustomUser(AbstractUser):
     can_data_be_shared = models.BooleanField(default=False)
     created_time = models.DateField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['pk']
+
     def clean(self):
         if self.age < 16:
             raise ValidationError(

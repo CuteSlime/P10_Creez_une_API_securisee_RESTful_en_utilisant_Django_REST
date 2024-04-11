@@ -41,6 +41,9 @@ class Issue(models.Model):
         max_length=12, choices=TAG_CHOICES, verbose_name="tag")
     created_time = models.DateField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['pk']
+
     def __str__(self):
         return self.title
 
@@ -58,6 +61,9 @@ class Comment(models.Model):
         max_length=500, verbose_name="commentaire")
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created_time = models.DateField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['pk']
 
     def __str__(self):
         return 'commentaire de : ' + self.author

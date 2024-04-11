@@ -22,6 +22,9 @@ class Project(models.Model):
         max_length=10, choices=TYPE_CHOICES, verbose_name="type de projet")
     created_time = models.DateField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['pk']
+
     # Add the author as a contributor
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -37,4 +40,5 @@ class Contributor(models.Model):
     created_time = models.DateField(auto_now_add=True)
 
     class Meta:
+        ordering = ['pk']
         unique_together = ('user', 'project')
