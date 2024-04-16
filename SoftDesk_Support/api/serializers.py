@@ -121,8 +121,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['contributors'] = ContributorSerializer(
-            instance.contributor_set.all(), many=True).data
+        if self.context.get('detail_view'):
+            representation['contributors'] = ContributorSerializer(
+                instance.contributor_set.all(), many=True).data
+        else:
+            representation.pop('contributors', None)
         return representation
 
     def create(self, validated_data):
@@ -160,6 +163,12 @@ class IssueSerializer(serializers.ModelSerializer):
             'created_time',
         ]
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not self.context.get('detail_view'):
+            representation.pop('project', None)
+        return representation
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if 'context' in kwargs:
@@ -191,6 +200,13 @@ class CommentSerializer(serializers.ModelSerializer):
             'uuid',
             'created_time',
         ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not self.context.get('detail_view'):
+            representation.pop('issue', None)
+            representation.pop('uuid', None)
+        return representation
 
     def create(self, validated_data):
         # Get the current authenticated user and issue, then set them to their respective field.

@@ -30,6 +30,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [ProjectPermissions]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, context={'detail_view': True})
+        return Response(serializer.data)
+
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         contributor_name = request.data.get('contributors')
@@ -86,6 +92,12 @@ class IssueViewSet(viewsets.ModelViewSet):
         context['project'] = self.kwargs['project_pk']
         return context
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, context={'detail_view': True})
+        return Response(serializer.data)
+
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         contributor_name = request.data.get('assign_to')
@@ -125,3 +137,9 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.filter(issue_id=self.kwargs['issue_pk'])
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, context={'detail_view': True})
+        return Response(serializer.data)
