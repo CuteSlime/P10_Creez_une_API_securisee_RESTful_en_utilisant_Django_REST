@@ -114,13 +114,13 @@ les informations exposé ne sont que celles autorisé au partage par les utilisa
 ``` 
   /api/users/
 ```
-  attribut : 
-    - `username` _string_ _required_ -- nom de l'utilisateur.
-    - `password` _string_ _required_ -- mot de passe de l'utilisateur.
-    - `age` _integer_ _required_ -- age de l'utilisateur (doit avoir 16 ans et plus).
-    - `mail` _string_ _optional_ -- adresse mail de l'utilisateur.
-    - `can_be_contacted` _boolean_ _optional_ -- l'utilisateur accepte t'il d'être contacté ? non par défaut.
-    - `can_data_be_shared` _boolean_ _optional_ -- l'utilisateur accepte t'il de partager ses information ? non par défaut.
+Attributes : 
+  - `username` _string_ _required_ -- nom de l'utilisateur.
+  - `password` _string_ _required_ -- mot de passe de l'utilisateur.
+  - `age` _integer_ _required_ -- age de l'utilisateur (doit avoir 16 ans et plus).
+  - `mail` _string_ _optional_ -- adresse mail de l'utilisateur.
+  - `can_be_contacted` _boolean_ _optional_ -- l'utilisateur accepte t'il d'être contacté ? non par défaut.
+  - `can_data_be_shared` _boolean_ _optional_ -- l'utilisateur accepte t'il de partager ses information ? non par défaut.
 
 autorisé : 
   - authenticated user : `GET`, `POST`
@@ -174,13 +174,13 @@ autorisé :
 ``` 
   /api/projects/
 ```
-  Attributes:
-    - `author` _CustomUser_ _required_ – L'auteur du projet.
-    - `contributors` _CustomUser_ _optional_ – La Liste des contributeurs au projet.
-    - `name` _string_ _required_ – Le nom du projet.
-    - `description` _string_ _required_ – La description du projet.
-    - `type` _string_ _required_ – Le type du projet (choix: ‘Back-end’, ‘Front-end’, ‘iOS’, ‘Android’).
-    - `created_time` _date_ _auto-generated_ – La date de creation du projet.
+Attributes:
+  - `author` _CustomUser_ _required_ – L'auteur du projet.
+  - `contributors` _CustomUser_ _optional_ – La Liste des contributeurs au projet.
+  - `name` _string_ _required_ – Le nom du projet.
+  - `description` _string_ _required_ – La description du projet.
+  - `type` _string_ _required_ – Le type du projet (choix: ‘Back-end’, ‘Front-end’, ‘iOS’, ‘Android’).
+  - `created_time` _date_ _auto-generated_ – La date de creation du projet.
 
 autorisé : 
   - Authenticated user: `GET`, `POST`
@@ -236,16 +236,16 @@ autorisé :
 ``` 
   /api/projects/12/issues/
 ```
-  Attributs : 
-    - `author` _CustomUser_ _auto-fill_ – L’auteur du ticket. 
-    - `assign_to` _CustomUser_ _optional_ – Assigné à. 
-    - `project` _Project_ _auto-fill_ – Le projet associé. 
-    - `title` _string_ _required_ – Le titre du ticket. 
-    - `description` _string_ _required_ – La description du ticket. 
-    - `statue` _string_ _required_ – Le statut du ticket (choix: ‘Todo’, ‘In progress’, ‘Finished’). 
-    - `priority` _string_ _required_ – La priorité du ticket (choix: ‘Low’, ‘Medium’, ‘High’). 
-    - `tag string` _required_ – Le tag du ticket (choix: ‘Bug’, ‘Feature’, ‘Task’). 
-    - `created_time` _date_ _auto-generated_ – La date de creation du ticket.
+Attributes : 
+  - `author` _CustomUser_ _auto-fill_ – L’auteur du ticket. 
+  - `assign_to` _CustomUser_ _optional_ – Assigné à. 
+  - `project` _Project_ _auto-fill_ – Le projet associé. 
+  - `title` _string_ _required_ – Le titre du ticket. 
+  - `description` _string_ _required_ – La description du ticket. 
+  - `statue` _string_ _required_ – Le statut du ticket (choix: ‘Todo’, ‘In progress’, ‘Finished’). 
+  - `priority` _string_ _required_ – La priorité du ticket (choix: ‘Low’, ‘Medium’, ‘High’). 
+  - `tag string` _required_ – Le tag du ticket (choix: ‘Bug’, ‘Feature’, ‘Task’). 
+  - `created_time` _date_ _auto-generated_ – La date de creation du ticket.
 
 autorisé :
   - Project contributors, Author: `GET`, `POST`
@@ -308,13 +308,13 @@ autorisé :
 ``` 
   /api/projects/12/issues/2/comments/
 ```
-  Attributs : 
-    - `author` _CustomUser_ _auto-fill_ – L’auteur du commentaire. 
-    - `issue` _Issue_ _auto-fill_ – Le ticket associé. 
-    - `description` _string_ _auto-fill_ – Le commentaire.
-    - `uuid` _UUID _ _auto-generated_ – L’UUID du commentaire.
-    - `created_time` _date_ _auto-generated_ – La date de creation du commentaire.
-
+Attributes :  
+  - `author` _CustomUser_ _auto-fill_ – L’auteur du commentaire. 
+  - `issue` _Issue_ _auto-fill_ – Le ticket associé. 
+  - `description` _string_ _auto-fill_ – Le commentaire.
+  - `uuid` _UUID _ _auto-generated_ – L’UUID du commentaire.
+  - `created_time` _date_ _auto-generated_ – La date de creation du commentaire.
+  
 
 - requête GET.
   ```
