@@ -7,6 +7,10 @@ from issue.models import Issue, Comment
 
 
 class CustomSlugRelatedField(serializers.SlugRelatedField):
+    """
+        CustomSlug relatedField that return a list of available user with the error
+    """
+
     def to_internal_value(self, data):
         try:
             value = self.get_queryset().get(**{self.slug_field: data})
@@ -35,6 +39,22 @@ class ChoiceFieldWithCustomErrorMessage(serializers.ChoiceField):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the CustomUser model.
+
+    Fields:
+    - id: The ID of the user.
+    - username: The username of the user.
+    - password: The password of the user (write-only).
+    - email: The email of the user. (hide if can_data_be_shared is false)
+    - age: The age of the user. (hide if can_data_be_shared is false)
+    - can_be_contacted: A boolean indicating whether the user can be contacted.
+    - can_data_be_shared: A boolean indicating whether the user's data can be shared.
+    - created_time: The time the user was created.
+
+    Validation:
+    - validate: Ensures the user's age is not less than 16.
+    """
     class Meta:
         model = CustomUser
         fields = [
@@ -88,6 +108,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ContributorSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Contributor model.
+
+    Fields:
+    - id: The ID of the contributor.
+    - user: The user who is the contributor.
+    - project: The project the user is contributing to.
+    - created_time: The time the contributor was created.
+
+    Validation:
+    - create: Ensures the project exist in the view and set it.
+    """
+
     user = serializers.StringRelatedField()
     project = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
@@ -103,6 +136,22 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Project model.
+
+    Fields:
+    - id: The ID of the project.
+    - author: The author of the project.
+    - contributors: The list of contributors of the project.
+    - name: The name of the project.
+    - description: The description of the project.
+    - type: The type of the project.
+    - created_time: The time the project was created.
+
+    Validation:
+    - create: use the authenticated user to set the author.
+    """
+
     author = serializers.StringRelatedField()
     contributors = ContributorSerializer(many=True, read_only=True)
     type = ChoiceFieldWithCustomErrorMessage(choices=Project.TYPE_CHOICES)
@@ -135,6 +184,26 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Issue model.
+
+    Fields:
+    - id: The ID of the issue.
+    - author: The author of the issue.
+    - assign_to: The user assigned to the issue.
+    - project: The project the issue belongs to.
+    - title: The title of the issue.
+    - description: The description of the issue.
+    - statue: The status of the issue.
+    - priority: The priority of the issue.
+    - tag: The tag of the issue.
+    - created_time: The time the issue was created.
+
+    Validation:
+    - create: use the authenticate user and get the project from the view 
+    to set the author and project of the issue
+    """
+
     author = serializers.StringRelatedField()
     assign_to = CustomSlugRelatedField(
         queryset=CustomUser.objects.none(),
@@ -187,6 +256,22 @@ class IssueSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Comment model.
+
+    Fields:
+    - id: The ID of the comment.
+    - author: The author of the comment.
+    - issue: The issue the comment belongs to.
+    - description: The description of the comment.
+    - uuid: The UUID of the comment.
+    - created_time: The time the comment was created.
+
+    Validation:
+    - create: use the authenticate user and get the project from the view 
+    to set the author and project of the comment
+    """
+
     author = serializers.StringRelatedField()
     issue = serializers.SlugRelatedField(slug_field='title', read_only=True)
 

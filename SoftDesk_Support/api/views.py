@@ -37,6 +37,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
+        """
+        get the contributor field to validate if the contributor exist an set it.
+        can take the username if unique, else it's will look for the id.
+        """
         instance = self.get_object()
         contributor_name = request.data.get('contributors')
         if contributor_name is not None:
@@ -55,6 +59,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        get the contributor field to validate if the contributor exist an delete it.
+        can take only ID because the api give it clearly in the list of contributor.
+        """
         instance = self.get_object()
         contributor_id = request.data.get('contributors')
         if contributor_id is not None:
@@ -99,9 +107,12 @@ class IssueViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
+        """
+        get the assign_to field to validate if the contributor exist an set it.
+        can take the username if unique, else it's will look for the id.
+        """
         instance = self.get_object()
         contributor_name = request.data.get('assign_to')
-        print(contributor_name)
         if contributor_name is not None:
             try:
                 if CustomUser.objects.filter(username=contributor_name).count() == 1:
